@@ -22,6 +22,11 @@ app.get('/list', (req, res) => {
   res.render('list')
 })
 
+app.get('/book-form', (req, res) => {
+  res.render('book-form')
+})
+
+
 //port
 app.listen(port, () => {
   console.log(`SERVER started on port ${port}`)
