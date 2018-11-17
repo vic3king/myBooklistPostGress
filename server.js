@@ -81,6 +81,41 @@ app.post('/book/delete/:id', (req, res) => {
     .catch(err => console.error(err));
 })
 
+//update book ifrst populate book-edit page with data from book-list
+app.get('/book/edit/:id', (req, res) => {
+  const client = new Client()
+  client.connect()
+    .then(() => {
+      const sql = 'SELECT * FROM books WHERE book_id = $1'
+      const params = [req.params.id]
+      return client.query(sql, params)
+    })
+    .then((results) => {
+      if (results.rowCount === 0) {
+        return res.redirect('/books')
+      }
+      //use this to set book.bookId in book.edit.mustache
+      res.render('book-edit', {
+        book: results.rows[0]
+      })
+    })
+    .catch(err => console.error(err));
+})
+
+//update book, after populating the persist to db
+app.post('/book/edit/:id', (req, res) => {
+  const client = new Client
+  client.connect()
+    .then(() => {
+      const sql = 'UPDATE books SET title = $1, authors = $2 WHERE book_id = $3'
+      const params = [req.body.title, req.body.authors, req.params.id]
+      return client.query(sql, params)
+    })
+    .then((results) => {
+      res.redirect('/books')
+    })
+    .catch(err => console.error(err));
+})
 //port
 app.listen(port, () => {
   console.log(`SERVER started on port ${port}`)

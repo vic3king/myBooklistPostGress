@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Book List</title>
-   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="/style.css">
 </head>
 <body class="list-page">
   <h1>Book List Page</h1>
@@ -16,6 +16,7 @@
       <td>{{bookId}}</td>
        <td>{{title}}</td>
        <td>{{authors}}</td>
+       <td><a href="/book/edit/{{bookId}}">edit</a></td>
        <td>
          <form method="POST" action="/book/delete/{{bookId}}">
          <button type="submit">delete</button>
