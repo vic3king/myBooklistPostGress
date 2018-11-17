@@ -2,9 +2,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { Pool, Client } = require('pg')
-
+const pgCamelCase = require('pg-camelcase');
+//used to camelcase the output from postgress eg: instead of book_id i can do bookId
+pgCamelCase.inject(require('pg'))
 //template veiw engine
 const mustacheExpress = require('mustache-express')
+
 //sets env dependencies
 require('dotenv').config()
 const port = process.env.PORT
@@ -23,8 +26,19 @@ app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
 
 //route for list of all books
-app.get('/list', (req, res) => {
-  res.render('list')
+app.get('/books', (req, res) => {
+  const client = new Client
+  client.connect()
+    .then(() => {
+      return client.query('SELECT * FROM books')
+    })
+    .then((result) => {
+      console.log('results?', result)
+      res.render('book-list', {
+        books: result.rows
+      })
+    })
+    .catch(err => console.error(err));
 })
 
 //route for adding book
@@ -45,9 +59,26 @@ app.post('/book/add', (req, res) => {
     })
     .then((result) => {
       console.log('result?', result)
-      res.redirect('/list')
+      res.redirect('/books')
     }).catch(err => console.error(err));
 
+})
+
+//delete a book
+app.post('/book/delete/:id', (req, res) => {
+  console.log('deleting id', req.params.id)
+  const client = new Client
+  client.connect()
+    .then(() => {
+      const sql = 'DELETE FROM books Where book_id = $1'
+      const params = [req.params.id]
+      return client.query(sql, params)
+    })
+    .then((results) => {
+      console.log('delete-results', results)
+      res.redirect('/books')
+    })
+    .catch(err => console.error(err));
 })
 
 //port

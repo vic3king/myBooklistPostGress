@@ -10,5 +10,19 @@
 <body class="list-page">
   <h1>Book List Page</h1>
   <p>Currently no notebooks listed</p>
+  <table>
+  {{#books}}
+    <tr>
+      <td>{{bookId}}</td>
+       <td>{{title}}</td>
+       <td>{{authors}}</td>
+       <td>
+         <form method="POST" action="/book/delete/{{bookId}}">
+         <button type="submit">delete</button>
+         </form>
+       </td>
+    </tr>
+  {{/books}}
+  </table>
 </body>
 </html>
